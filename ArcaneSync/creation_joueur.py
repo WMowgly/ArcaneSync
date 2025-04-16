@@ -9,51 +9,59 @@ class CreationJoueur(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # Initialisation du layout
-        layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
+        # Layout principal
+        main_layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
 
-        # Ajouter les champs pour les données du joueur
+        # Barre supérieure avec bouton retour
+        top_bar = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
+        btn_retour = Button(text="< Accueil", size_hint=(None, 1), width=120, font_size=14)
+        btn_retour.bind(on_press=self.retour_accueil)
+        top_bar.add_widget(btn_retour)
+
+        # Layout central pour le contenu
+        content_layout = BoxLayout(orientation='vertical', spacing=10)
+
         self.nom_input = TextInput(hint_text="Nom du joueur", font_size=18, multiline=False)
         self.hp_input = TextInput(hint_text="HP (ex: 100)", font_size=18, multiline=False, input_filter='int')
         self.mana_input = TextInput(hint_text="Mana (ex: 50)", font_size=18, multiline=False, input_filter='int')
 
-        # Ajouter un bouton pour enregistrer le joueur
         btn_enregistrer = Button(text="Enregistrer le joueur", font_size=18, size_hint=(None, None), size=(200, 50))
         btn_enregistrer.bind(on_press=self.enregistrer_joueur)
 
-        # Ajouter un label pour les erreurs éventuelles
         self.error_label = Label(text="", color=(1, 0, 0, 1), font_size=18)
 
-        layout.add_widget(Label(text="Création d'un joueur", font_size=30, bold=True))
-        layout.add_widget(self.nom_input)
-        layout.add_widget(self.hp_input)
-        layout.add_widget(self.mana_input)
-        layout.add_widget(btn_enregistrer)
-        layout.add_widget(self.error_label)
+        content_layout.add_widget(Label(text="Création d'un joueur", font_size=30, bold=True))
+        content_layout.add_widget(self.nom_input)
+        content_layout.add_widget(self.hp_input)
+        content_layout.add_widget(self.mana_input)
+        content_layout.add_widget(btn_enregistrer)
+        content_layout.add_widget(self.error_label)
 
-        self.add_widget(layout)
+        # Ajouter top bar et contenu au layout principal
+        main_layout.add_widget(top_bar)
+        main_layout.add_widget(content_layout)
+
+        self.add_widget(main_layout)
+
+    def retour_accueil(self, instance):
+        self.manager.current = 'accueil'
 
     def enregistrer_joueur(self, instance):
-        # Récupérer les données du joueur
         nom = self.nom_input.text
         try:
             hp = int(self.hp_input.text)
             mana = int(self.mana_input.text)
         except ValueError:
-            # Afficher une erreur si les HP ou mana ne sont pas des nombres valides
             self.error_label.text = "Les HP et le Mana doivent être des nombres entiers."
             return
 
         if not nom or hp <= 0 or mana <= 0:
-            # Vérifier que tous les champs sont remplis correctement
             self.error_label.text = "Veuillez entrer un nom valide et des valeurs positives pour HP et Mana."
             return
 
-        # Charger les données actuelles
         data = load_data()
         crit_result = False
-        # Ajouter le nouveau joueur avec un ID unique
-        new_id = len(data["joueurs"])  # Utiliser la taille actuelle pour générer un ID unique
+        new_id = len(data["joueurs"])
         data["joueurs"].append({
             "nom": nom,
             "hp": hp,
@@ -64,12 +72,7 @@ class CreationJoueur(Screen):
             "reussite_critique_2": crit_result
         })
 
-        # Sauvegarder les données
         save_data(data)
-
-        # Mettre à jour l'écran de sélection des joueurs
         self.manager.get_screen('selection_joueur').creer_boutons_joueurs()
-
-        # Afficher un message de succès et rediriger vers l'écran de sélection
-        self.error_label.text = ""  # Réinitialiser l'erreur
-        self.manager.current = 'selection_joueur'  # Rediriger vers la page de sélection des joueurs
+        self.error_label.text = ""
+        self.manager.current = 'selection_joueur'
