@@ -11,24 +11,38 @@ from selection_joueur import SelectionJoueur  # Import du nouvel écran pour sé
 class Accueil(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
 
-        # Titre de l'interface
-        label = Label(text="Bienvenue dans ArcaneSync", font_size=50, bold=True)
-        btn_joueur = Button(text="Joueur", font_size=18, size_hint=(None, None), size=(200, 50))
-        btn_mj = Button(text="Mode MJ", font_size=18, size_hint=(None, None), size=(200, 50))
-        btn_creation_joueur = Button(text="Créer un Joueur", font_size=18, size_hint=(None, None), size=(200, 50))  # Nouveau bouton
+        # Conteneur principal centré verticalement
+        main_layout = BoxLayout(orientation='vertical', padding=50, spacing=30)
+        
+        # Layout pour centrer les éléments horizontalement
+        center_layout = BoxLayout(orientation='vertical', spacing=20, size_hint=(None, None), size=(300, 300), pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
-        layout.add_widget(label)
-        layout.add_widget(btn_joueur)
-        layout.add_widget(btn_mj)
-        layout.add_widget(btn_creation_joueur)  # Ajouter le bouton de création de joueur
+        # Titre
+        label = Label(text="Bienvenue dans ArcaneSync", font_size=40, bold=True, size_hint=(1, None), height=60, halign='center')
+        label.bind(size=label.setter('text_size'))  # Pour que le texte se centre bien
 
+        # Boutons
+        btn_joueur = Button(text="Joueur", font_size=18, size_hint=(1, None), height=50)
+        btn_mj = Button(text="Mode MJ", font_size=18, size_hint=(1, None), height=50)
+        btn_creation_joueur = Button(text="Créer un Joueur", font_size=18, size_hint=(1, None), height=50)
+
+        # Ajouter les widgets au layout centré
+        center_layout.add_widget(btn_joueur)
+        center_layout.add_widget(btn_mj)
+        center_layout.add_widget(btn_creation_joueur)
+
+        # Ajouter les éléments au layout principal
+        main_layout.add_widget(label)
+        main_layout.add_widget(center_layout)
+
+        # Ajout du layout à l'écran
+        self.add_widget(main_layout)
+
+        # Bind des boutons
         btn_joueur.bind(on_press=self.start_joueur)
         btn_mj.bind(on_press=self.start_mj)
-        btn_creation_joueur.bind(on_press=self.start_creation_joueur)  # Lier à la fonction pour créer un joueur
-
-        self.add_widget(layout)
+        btn_creation_joueur.bind(on_press=self.start_creation_joueur)
 
     def start_joueur(self, instance):
         # Redirige vers l'écran de sélection du joueur

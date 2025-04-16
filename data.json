@@ -1,0 +1,31 @@
+{
+    "joueurs": [
+        {
+            "nom": "Test",
+            "hp": 100,
+            "mana": 30,
+            "echec_critique_1": false,
+            "echec_critique_2": false,
+            "reussite_critique_1": false,
+            "reussite_critique_2": false
+        },
+        {
+            "nom": "testbouton",
+            "hp": 100,
+            "mana": 50,
+            "echec_critique_1": false,
+            "echec_critique_2": false,
+            "reussite_critique_1": false,
+            "reussite_critique_2": false
+        },
+        {
+            "nom": "fdfd",
+            "hp": 20,
+            "mana": 20,
+            "echec_critique_1": false,
+            "echec_critique_2": false,
+            "reussite_critique_1": false,
+            "reussite_critique_2": false
+        }
+    ]
+}

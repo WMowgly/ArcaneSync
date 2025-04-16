@@ -7,52 +7,64 @@ from data_manager import load_data, save_data  # Assure-toi que ces fonctions ex
 class SelectionJoueur(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
+        # Layout principal vertical (haut, centre, bas)
+        self.main_layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
 
-        # Titre de la sélection
-        label = Label(text="Choisissez votre joueur", font_size=30, bold=True)
+        # ---- HAUT : Barre avec bouton retour ----
+        top_bar = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
+        btn_retour = Button(text="< Accueil", size_hint=(None, 1), width=100)
+        btn_retour.bind(on_press=self.retour_accueil)
+        top_bar.add_widget(btn_retour)
+        self.main_layout.add_widget(top_bar)
 
-        # Ajouter le label au layout
-        self.layout.add_widget(label)
+        # ---- CENTRE : Layout des joueurs (sera rempli dynamiquement) ----
+        self.layout_joueurs = BoxLayout(orientation='vertical', spacing=10)
+        self.main_layout.add_widget(self.layout_joueurs)
 
-        # Charger les joueurs existants et créer les boutons pour chacun d'eux
+        # ---- BAS : Bouton création joueur ----
+        btn_creation_joueur = Button(
+            text="Créer un nouveau joueur",
+            font_size=18,
+            size_hint=(1, None),
+            height=50
+        )
+        btn_creation_joueur.bind(on_press=self.aller_creation_joueur)
+        self.main_layout.add_widget(btn_creation_joueur)
+
+        self.add_widget(self.main_layout)
+
+        # Charger les boutons de joueurs
         self.creer_boutons_joueurs()
-
-        self.add_widget(self.layout)
 
     def creer_boutons_joueurs(self):
         # Charger les données des joueurs
         data = load_data()
 
-        # Supprimer les widgets existants (y compris les boutons et labels)
-        self.layout.clear_widgets()
+        # Vider l'ancien contenu
+        self.layout_joueurs.clear_widgets()
 
-        # Ajouter le label au layout à nouveau (sinon il serait supprimé)
-        self.layout.add_widget(Label(text="Choisissez votre joueur", font_size=30, bold=True))
+        # Ajouter un titre
+        self.layout_joueurs.add_widget(Label(text="Choisissez votre joueur", font_size=30, bold=True))
 
-        # Créer un bouton pour chaque joueur existant
+        # Créer les boutons pour chaque joueur
         for index, joueur in enumerate(data["joueurs"]):
-            # Créer le bouton de sélection du joueur
             btn_joueur = Button(
                 text=joueur["nom"], font_size=18, size_hint=(None, None), size=(200, 50)
             )
             btn_joueur.bind(on_press=self.selectionner_joueur)
-            btn_joueur.player_id = index  # Stocker l'ID du joueur dans le bouton
+            btn_joueur.player_id = index
 
-            # Créer le bouton de suppression
             btn_supprimer = Button(
                 text="Supprimer", font_size=18, size_hint=(None, None), size=(100, 50)
             )
             btn_supprimer.bind(on_press=self.supprimer_joueur)
-            btn_supprimer.player_id = index  # Stocker l'ID du joueur dans le bouton de suppression
+            btn_supprimer.player_id = index
 
-            # Créer un layout horizontal pour les deux boutons
-            bouton_layout = BoxLayout(orientation='horizontal', spacing=10)
-            bouton_layout.add_widget(btn_joueur)
-            bouton_layout.add_widget(btn_supprimer)
+            ligne = BoxLayout(orientation='horizontal', spacing=10)
+            ligne.add_widget(btn_joueur)
+            ligne.add_widget(btn_supprimer)
 
-            # Ajouter le layout au layout principal
-            self.layout.add_widget(bouton_layout)
+            self.layout_joueurs.add_widget(ligne)
 
     def selectionner_joueur(self, instance):
         # Vérifier si l'ID du joueur est valide avant de continuer
@@ -83,3 +95,10 @@ class SelectionJoueur(Screen):
 
         # Mettre à jour l'interface en récréant les boutons
         self.creer_boutons_joueurs()
+
+    def aller_creation_joueur(self, instance):
+        self.manager.current = 'creation_joueur'
+
+    def retour_accueil(self, instance):
+        self.manager.current = 'accueil'
+
