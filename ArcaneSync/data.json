@@ -1,0 +1,13 @@
+{
+    "joueurs": [
+        {
+            "nom": "dqdqd",
+            "hp": 54854,
+            "mana": 444,
+            "echec_critique_1": false,
+            "echec_critique_2": false,
+            "reussite_critique_1": false,
+            "reussite_critique_2": false
+        }
+    ]
+}
